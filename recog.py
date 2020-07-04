@@ -71,7 +71,8 @@ def shrink_screen(frame, current_skeleton_coords):
 
 def uvMap(coords):
     WIDTH, HEIGHT = 640, 480  # camera dimensions
-    FOV_X, FOV_Y = math.radians(84.1), math.radians(53.8)  # camera FOVs
+    # FOV_X, FOV_Y = math.radians(84.1), math.radians(53.8)  # camera FOVs
+    FOV_X, FOV_Y = math.radians(90), math.radians(53.8)  # camera FOVs
 
     pitch = math.atan(coords[0] / coords[2])
     yaw = math.atan(coords[1] / coords[2])
@@ -79,4 +80,4 @@ def uvMap(coords):
     x = WIDTH / 2 + (pitch * (WIDTH / FOV_X))
     y = HEIGHT / 2 - (yaw * (HEIGHT / FOV_Y))
 
-    return x, y
+    return int(x), int(y)
