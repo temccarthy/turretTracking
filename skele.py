@@ -2,6 +2,7 @@ from pykinect import nui
 from pykinect.nui import JointId
 
 import re
+import math
 
 
 class Skeleton:
@@ -20,7 +21,9 @@ class Skeleton:
 
             head = skeleton.SkeletonPositions[JointId.Head]
             head_data = re.findall("-?\d+.\d+", str(head))[:3]
-            # head_data = tuple(float(h) * 38.39 for h in head_data) # converting to inches
+            head_data = tuple(float(h) * 38.39 for h in head_data)  # converting to inches
+            head_data = head_data + (math.sqrt(head_data[0]**2 + head_data[1]**2 + head_data[2]**2),)  # add distance to data tuple
+
             self.coords = head_data
         else:
             self.present = False

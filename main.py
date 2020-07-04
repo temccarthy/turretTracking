@@ -1,7 +1,7 @@
 from pykinect import nui
 from pykinect.nui import JointId
 from skele import Skeleton
-# from recog import recognize_face
+from recog import recognize_face
 
 import cv2
 import numpy as np
@@ -13,12 +13,16 @@ def video_handler_function(frame):
     frame.image.copy_bits(video.ctypes.data)
 
     for index, skele in enumerate(skeletons_array):
-        if skele.present and skele.name == "":
-            print("Looking for face to recognize")
-            # recognize_face(video, skele, index)
+        if skele.present:
+            if skele.name == "":  # if unnamed skeleton
+                print("Looking for face to recognize")
+                recognize_face(video, skeletons_array, index)
+            else:  # if named skeleton
+                # cv2.circle(video, skeletons_array[index].)
+                skele
         elif not skele.present and skele.name != "":
+            print("lost " + str(index) + "th skeleton")
             skele.set_name("")
-            # set coords to 0?
 
     try:
         cv2.imshow('KINECT Video Stream', video)

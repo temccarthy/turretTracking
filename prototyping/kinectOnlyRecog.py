@@ -133,9 +133,9 @@ print("Initializing facial recognition...")
 known_face_encodings = []
 known_face_names = []
 
-for _, _, files in os.walk("./pics"):
+for _, _, files in os.walk("../pics"):
     for f in files:
-        img = face_recognition.load_image_file("./pics/"+f)
+        img = face_recognition.load_image_file("../pics/"+f)
         encoding = face_recognition.face_encodings(img)
         print(f + " - " + str(len(encoding)) + " face(s) found")
         if len(encoding) == 0:
