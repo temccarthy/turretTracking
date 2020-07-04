@@ -37,17 +37,17 @@ def recognize_face(frame, skeletons_array, index):
     #  should only be 1 face, not sure what else to do here
     for face_encoding in face_encodings:
         # See if the face is a match for the known face(s)
-        matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=.1)  # compare faces
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=.07)  # compare faces
         valued_matches = map(lambda x: float((x == True).sum()) / 128, matches)  # map matches array to values
 
         print(valued_matches)
         name = "Unknown"
-        for idx, x in enumerate(valued_matches):
-            if x > .95:
-                print(idx)
+        for x in valued_matches:
+            if x > .85:
+                idx = valued_matches.index(max(valued_matches))
                 name = known_face_names[idx]
                 break
-        skeletons_array[index].name = name
+        skeletons_array[index].set_name(name)
         print("found " + name)
         break
 

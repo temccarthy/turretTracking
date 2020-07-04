@@ -11,9 +11,11 @@ class Skeleton:
         self.name = name
         self.present = present
         self.coords = coords
+        self.tries = 0
 
     def __str__(self):
-        return "name: " + str(self.name) + ", present: " + str(self.present) + ", coords: " + str(self.coords)
+        return "name: " + str(self.name) + ", present: " + str(self.present) + \
+               ", coords: " + str(self.coords) + ", tries: " + str(self.tries)
 
     def set_skeleton_data(self, skeleton):
         if skeleton.eTrackingState == nui.SkeletonTrackingState.TRACKED:
@@ -27,6 +29,11 @@ class Skeleton:
             self.coords = head_data
         else:
             self.present = False
+            self.name = ""
+            self.tries = 0
 
     def set_name(self, name):
+        print("setting name to " + name)
+        if name == "Unknown":
+            self.tries += 1
         self.name = name

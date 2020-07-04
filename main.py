@@ -14,8 +14,9 @@ def video_handler_function(frame):
 
     for index, skele in enumerate(skeletons_array):
         if skele.present:
-            if skele.name == "":  # if unnamed skeleton
-                print("Looking for face to recognize")
+            if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):  # if unnamed skeleton
+                # print(str(skele))
+                # print("Looking for face to recognize")
                 recognize_face(video, skeletons_array, index)
             else:  # if named skeleton
                 uv_coords = uvMap(skeletons_array[index].coords)
@@ -23,8 +24,7 @@ def video_handler_function(frame):
                 cv2.putText(video, skeletons_array[index].name, uv_coords,
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
         elif not skele.present and skele.name != "":
-            print("lost " + str(index) + "th skeleton")
-            skele.set_name("")
+            print("lost " + skeletons_array[index].name + "'s skeleton")
 
     try:
         cv2.imshow('KINECT Video Stream', video)
