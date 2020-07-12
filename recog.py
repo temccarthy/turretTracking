@@ -9,22 +9,24 @@ print("Initializing facial recognition...")
 known_face_encodings = []
 known_face_names = []
 
-for _, _, files in os.walk("./pics"):
+for root, _, files in os.walk("./pics/"):
     for f in files:
-        img = face_recognition.load_image_file("./pics/"+f)
+        # print(root[7:] + "/" + f)
+        img = face_recognition.load_image_file(root + "/" + f)
         encoding = face_recognition.face_encodings(img)
-        print(f + " - " + str(len(encoding)) + " face(s) found")
+        print(root[7:] + "/" + f + " - " + str(len(encoding)) + " face(s) found")
         if len(encoding) == 0:
-            print("no face found for " + f)
+            print("no face found for " + root[7:] + "/" + f)
             continue
         known_face_encodings.append(encoding)
-        known_face_names.append(f[:f.find('.')])
+        name = (root[7:])  # remove ./pics/ from root to get name
+        known_face_names.append(name)
 
 print("Facial recognition initialized")
 
 
-def recognize_face(frame, skeletons_array, index):
-    current_skeleton = skeletons_array[index]
+def recognize_face(frame, skeletons_array, skele_index):
+    current_skeleton = skeletons_array[skele_index]
 
     small_frame = shrink_screen(frame, current_skeleton.coords)
 
@@ -41,13 +43,19 @@ def recognize_face(frame, skeletons_array, index):
         valued_matches = map(lambda x: float((x == True).sum()) / 128, matches)  # map matches array to values
 
         print(valued_matches)
+        sorted_indeces = np.argsort(valued_matches)[::-1]
         name = "Unknown"
-        for x in valued_matches:
-            if x > .85:
-                idx = valued_matches.index(max(valued_matches))
-                name = known_face_names[idx]
+        for i, index in enumerate(sorted_indeces):
+            if i == 0 and valued_matches[index] < .85:  # check that highest value is at least over threshold or else break
                 break
-        skeletons_array[index].set_name(name)
+
+            if name in map(lambda x: x.name, skeletons_array):  # check that name hasn't been used yet or else check next index
+                continue
+
+            name = known_face_names[index]  # after finding the highest value with unused name, break
+            break
+
+        skeletons_array[skele_index].set_name(name)
         print("found " + name)
         break
 
@@ -55,7 +63,7 @@ def recognize_face(frame, skeletons_array, index):
 # Shrinks screen size so recognizer doesn't have to look at whole screen,
 #  only has to look at where the skeleton head is
 def shrink_screen(frame, current_skeleton_coords):
-    x,y = uvMap(current_skeleton_coords)
+    x, y = uvMap(current_skeleton_coords)
 
     distance_factor = 100 / current_skeleton_coords[3]  # size factor of smaller screen
     head_width, head_height = 150 * distance_factor, 100 * distance_factor
@@ -71,8 +79,7 @@ def shrink_screen(frame, current_skeleton_coords):
 
 def uvMap(coords):
     WIDTH, HEIGHT = 640, 480  # camera dimensions
-    # FOV_X, FOV_Y = math.radians(84.1), math.radians(53.8)  # camera FOVs
-    FOV_X, FOV_Y = math.radians(90), math.radians(53.8)  # camera FOVs
+    FOV_X, FOV_Y = math.radians(84.1), math.radians(53.8)  # camera FOVs
 
     pitch = math.atan(coords[0] / coords[2])
     yaw = math.atan(coords[1] / coords[2])
