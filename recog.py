@@ -11,12 +11,12 @@ known_face_names = []
 
 for root, _, files in os.walk("./pics/"):
     for f in files:
-        # print(root[7:] + "/" + f)
         img = face_recognition.load_image_file(root + "/" + f)
         encoding = face_recognition.face_encodings(img)
-        print(root[7:] + "/" + f + " - " + str(len(encoding)) + " face(s) found")
+        file_name_shortened = root[7:] + "/" + f
+        print(file_name_shortened + " - " + str(len(encoding)) + " face(s) found")
         if len(encoding) == 0:
-            print("no face found for " + root[7:] + "/" + f)
+            print("no face found for " + file_name_shortened)
             continue
         known_face_encodings.append(encoding)
         name = (root[7:])  # remove ./pics/ from root to get name
