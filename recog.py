@@ -42,17 +42,18 @@ def recognize_face(frame, skeletons_array, skele_index):
         matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=.07)  # compare faces
         valued_matches = map(lambda x: float((x == True).sum()) / 128, matches)  # map matches array to values
 
-        print(valued_matches)
+        # print(valued_matches)
         sorted_indeces = np.argsort(valued_matches)[::-1]
         name = "Unknown"
         for i, index in enumerate(sorted_indeces):
             if i == 0 and valued_matches[index] < .85:  # check that highest value is at least over threshold or else break
                 break
 
-            if name in map(lambda x: x.name, skeletons_array):  # check that name hasn't been used yet or else check next index
+            temp_name = known_face_names[index]
+            if temp_name in map(lambda x: x.name, skeletons_array):  # check that temp_name hasn't been used yet or else check next index
                 continue
 
-            name = known_face_names[index]  # after finding the highest value with unused name, break
+            name = temp_name  # after finding the highest value with unused name, break
             break
 
         skeletons_array[skele_index].set_name(name)

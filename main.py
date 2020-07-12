@@ -15,8 +15,6 @@ def video_handler_function(frame):
     for index, skele in enumerate(skeletons_array):
         if skele.present:
             if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):  # if unnamed skeleton
-                # print(str(skele))
-                # print("Looking for face to recognize")
                 recognize_face(video, skeletons_array, index)
             else:  # if named skeleton
                 uv_coords = uvMap(skeletons_array[index].coords)
@@ -25,6 +23,7 @@ def video_handler_function(frame):
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
         elif not skele.present and skele.name != "":
             print("lost " + skeletons_array[index].name + "'s skeleton")
+            skeletons_array[index].reset_name()
 
     try:
         cv2.imshow('KINECT Video Stream', video)
@@ -40,13 +39,7 @@ def skeleton_frame_function(frame):
         skeletons_array[index].set_skeleton_data(skeleton)
 
 
-skeletons_array = []
-for i in range(6):
-    skeletons_array.append(Skeleton("", False, (0, 0, 0)))
-
-
-if __name__ == "__main__":
-    show_video = True
+def main_loop(show_video):
 
     print("Initializing Kinect...")
     with nui.Runtime() as kinect:
@@ -66,7 +59,25 @@ if __name__ == "__main__":
         while run:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 run = False
+            if cv2.waitKey(1) & 0xFF == ord(' '):
+                reset_skeletons_array()
 
         kinect.close()
 
     print("Exiting")
+
+
+def reset_skeletons_array():
+    print("Resetting skeletons_array")
+    del skeletons_array[:]
+    for i in range(6):
+        skeletons_array.append(Skeleton("", False, (0, 0, 0)))
+
+
+# initialize skeletons_array
+skeletons_array = []
+reset_skeletons_array()
+
+
+if __name__ == "__main__":
+    main_loop(show_video=True)

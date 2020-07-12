@@ -29,11 +29,13 @@ class Skeleton:
             self.coords = head_data
         else:
             self.present = False
-            self.name = ""
             self.tries = 0
 
     def set_name(self, name):
-        print("setting name to " + name)
+        # print("setting name to " + name)
         if name == "Unknown":
             self.tries += 1
         self.name = name
+
+    def reset_name(self):
+        self.name = ""
