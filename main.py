@@ -40,7 +40,6 @@ def skeleton_frame_function(frame):
 
 
 def main_loop(show_video):
-
     print("Initializing Kinect...")
     with nui.Runtime() as kinect:
         kinect.skeleton_engine.set_enabled(True)

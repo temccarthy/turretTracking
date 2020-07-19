@@ -89,3 +89,6 @@ def uvMap(coords):
     y = HEIGHT / 2 - (yaw * (HEIGHT / FOV_Y))
 
     return int(x), int(y)
+
+if __name__ == "__main__":
+    pass
