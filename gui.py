@@ -24,18 +24,19 @@ class App(tk.Frame):
 	def load_main_frame(self, master):
 		lbl_title = tk.Label(master=master, text="Voice Activated Gun", bg="red", font=("Comic Sans MS", 24))
 		lbl_title.grid(row=0, column=0, sticky="ewn")
-		master.grid_rowconfigure(0, weight=1)
+		master.grid_rowconfigure(0, weight=0)
 
-		top_btn_row = tk.Frame(master, background="bisque")
+		top_btn_row = tk.Frame(master)
 		top_btn_row.grid(row=1, column=0)
 		master.rowconfigure(1, weight=1)
 
-		reset_btn = self.make_button("Reset Faces", top_btn_row)
-		reset_btn.grid(row=0, column=0, stick="s")
-		manage_btn = self.make_button("Manage Faces", top_btn_row)
-		manage_btn.grid(row=0, column=1)
-		top_btn_row.columnconfigure(0, weight=1)
-		top_btn_row.columnconfigure(1, weight=1)
+		reset_btn = self.make_button("Reset Faces", top_btn_row, cmd=main.reset_skeletons_array)
+		reset_btn.grid(row=0, column=0, padx=20, pady=20)
+
+		log_btn = self.make_button("Logs", top_btn_row)
+		log_btn.grid(row=1, column=0, padx=20, pady=20)
+		screen_btn = self.make_button("Darken Screen", top_btn_row)
+		screen_btn.grid(row=1, column=1, padx=20, pady=20)
 
 		feed_row = tk.Frame(master, background="red")
 		feed_row.grid(row=2, column=0)
@@ -43,15 +44,8 @@ class App(tk.Frame):
 
 		show_feed_btn = self.make_button("Show Feed", feed_row, cmd=self.flip_show_video)
 		show_feed_btn.grid(row=0, column=0)
-
-		bottom_btn_row = tk.Frame(master, background="bisque")
-		bottom_btn_row.grid(row=3, column=0)
-		master.rowconfigure(3, weight=1)
-
-		log_btn = self.make_button("Logs", bottom_btn_row)
-		log_btn.grid(row=0, column=0)
-		lock_btn = self.make_button("Lock", bottom_btn_row)
-		lock_btn.grid(row=0, column=1)
+		feed_open_lbl = tk.Label(master=feed_row, text="somthing reallllllllllly long", bg="white", font=("Comic Sans MS", 16))
+		feed_open_lbl.grid(row=1, column=0)
 
 	def make_button(self, text, master, cmd=None):
 		btn = tk.Button(text=text, master=master, padx=10, pady=10, bg="sky blue", font=('Comic Sans MS', 16), command=cmd)
@@ -60,6 +54,7 @@ class App(tk.Frame):
 	def flip_show_video(self):
 		# showing and hiding window here
 		main.argDict["show_video"] = not main.argDict["show_video"]
+
 
 
 if __name__ == "__main__":

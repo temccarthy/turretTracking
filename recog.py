@@ -82,13 +82,13 @@ def uvMap(coords):
 	WIDTH, HEIGHT = 640, 480  # camera dimensions
 	FOV_X, FOV_Y = math.radians(84.1), math.radians(53.8)  # camera FOVs
 
-	pitch = math.atan(coords[0] / coords[2])
-	yaw = math.atan(coords[1] / coords[2])
+	if coords[2] != 0:
+		pitch = math.atan(coords[0] / coords[2])
+		yaw = math.atan(coords[1] / coords[2])
 
-	x = WIDTH / 2 + (pitch * (WIDTH / FOV_X))
-	y = HEIGHT / 2 - (yaw * (HEIGHT / FOV_Y))
+		x = WIDTH / 2 + (pitch * (WIDTH / FOV_X))
+		y = HEIGHT / 2 - (yaw * (HEIGHT / FOV_Y))
 
-	return int(x), int(y)
-
-if __name__ == "__main__":
-	pass
+		return int(x), int(y)
+	else:
+		return WIDTH, HEIGHT
