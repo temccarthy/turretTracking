@@ -1,7 +1,7 @@
 import Tkinter as tk
-import ttk
-import main
 import threading
+
+import main
 
 
 class App(tk.Frame):
@@ -22,10 +22,7 @@ class App(tk.Frame):
 		self.load_main_frame(master)
 
 	def load_main_frame(self, master):
-		lbl_title = tk.Label(master=master,
-							 text="Voice Activated Gun",
-							 bg="red",
-							 font=("Comic Sans MS", 24))
+		lbl_title = tk.Label(master=master, text="Voice Activated Gun", bg="red", font=("Comic Sans MS", 24))
 		lbl_title.grid(row=0, column=0, sticky="ewn")
 		master.grid_rowconfigure(0, weight=1)
 
@@ -44,8 +41,7 @@ class App(tk.Frame):
 		feed_row.grid(row=2, column=0)
 		master.rowconfigure(2, weight=1)
 
-		show_feed_btn = self.make_button("Show Feed", feed_row,
-										 cmd=self.flip_show_video)
+		show_feed_btn = self.make_button("Show Feed", feed_row, cmd=self.flip_show_video)
 		show_feed_btn.grid(row=0, column=0)
 
 		bottom_btn_row = tk.Frame(master, background="bisque")
@@ -57,15 +53,8 @@ class App(tk.Frame):
 		lock_btn = self.make_button("Lock", bottom_btn_row)
 		lock_btn.grid(row=0, column=1)
 
-
 	def make_button(self, text, master, cmd=None):
-		btn = tk.Button(text=text,
-						master=master,
-						padx=10,
-						pady=10,
-						bg="sky blue",
-						font=('Comic Sans MS', 16),
-						command=cmd)
+		btn = tk.Button(text=text, master=master, padx=10, pady=10, bg="sky blue", font=('Comic Sans MS', 16), command=cmd)
 		return btn
 
 	def flip_show_video(self):
@@ -80,4 +69,3 @@ if __name__ == "__main__":
 	thread1.start()
 	root.mainloop()
 	# main.main_loop(show_video=True)
-

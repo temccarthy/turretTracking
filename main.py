@@ -50,22 +50,17 @@ def main_loop(argDict):
 		kinect.video_stream.open(nui.ImageStreamType.Video, 2, nui.ImageResolution.Resolution640x480,
 								 nui.ImageType.Color)
 
-		if argDict["show_video"]:
-			cv2.namedWindow('KINECT Video Stream', cv2.WINDOW_AUTOSIZE)
+		cv2.namedWindow('KINECT Video Stream', cv2.WINDOW_AUTOSIZE)
 
 		print("Kinect Initialized")
 
 		run = True
 		while run:
-			#if argDict["update"]:
 
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				run = False
 			if cv2.waitKey(1) & 0xFF == ord(' '):
 				reset_skeletons_array()
-			# if cv2.waitKey(1) & 0xFF == ord('5'):
-			# 	argDict["show vid"] = not argDict["show vid"]
-			# 	print("toggling sho")
 
 		kinect.close()
 

@@ -14,8 +14,7 @@ class Skeleton:
 		self.tries = 0
 
 	def __str__(self):
-		return "name: " + str(self.name) + ", present: " + str(self.present) + \
-			   ", coords: " + str(self.coords) + ", tries: " + str(self.tries)
+		return "name: " + str(self.name) + ", present: " + str(self.present) + ", coords: " + str(self.coords) + ", tries: " + str(self.tries)
 
 	def set_skeleton_data(self, skeleton):
 		if skeleton.eTrackingState == nui.SkeletonTrackingState.TRACKED:
