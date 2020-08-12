@@ -64,7 +64,7 @@ def main_loop(argDict):
 
 		kinect.close()
 
-	print("Exiting")
+		print("Exiting")
 
 
 def reset_skeletons_array():
@@ -78,7 +78,8 @@ def reset_skeletons_array():
 skeletons_array = []
 reset_skeletons_array()
 argDict = {
-	"show_video": True
+	"show_video": True,
+	"kinect_error": False
 }
 
 

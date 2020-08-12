@@ -12,6 +12,7 @@ class App(tk.Frame):
 	def __init__(self, master=None, fullscreen=False):
 		tk.Frame.__init__(self, master)
 		self.master = master  # master frame
+		self.skeleton_list = tk.Listbox(master, height=6, width=50) # skeleton list
 
 		if fullscreen:
 			master.attributes("-fullscreen", True)
@@ -20,7 +21,6 @@ class App(tk.Frame):
 
 		master.grid_columnconfigure(0, weight=1)
 
-		# ttk.Style().theme_use('clam')
 		self.load_main_frame(master)
 
 	def load_main_frame(self, master):
@@ -37,19 +37,16 @@ class App(tk.Frame):
 		reset_btn = self.make_button("Exit", top_btn_row, cmd=self.quit_app)
 		reset_btn.grid(row=0, column=1, padx=20, pady=20)
 
-		log_btn = self.make_button("Logs", top_btn_row)
-		log_btn.grid(row=1, column=0, padx=20, pady=20)
-		screen_btn = self.make_button("Darken Screen", top_btn_row)
-		screen_btn.grid(row=1, column=1, padx=20, pady=20)
+		self.populate_skeleton_listbox()
+		self.skeleton_list.grid(row=2, column=0)
+		# master.rowconfigure(2, weight=1)
 
 		feed_row = tk.Frame(master, background="red")
-		feed_row.grid(row=2, column=0)
-		master.rowconfigure(2, weight=1)
+		feed_row.grid(row=3, column=0)
+		master.rowconfigure(3, weight=1)
 
-		show_feed_btn = self.make_button("Show Feed", feed_row, cmd=lambda: self.flip_show_video(show_feed_btn))
+		show_feed_btn = self.make_button("Hide Feed", feed_row, cmd=lambda: self.flip_show_video(show_feed_btn))
 		show_feed_btn.grid(row=0, column=0)
-		feed_open_lbl = tk.Label(master=feed_row, text="somthing reallllllllllly long", bg="white", font=("Comic Sans MS", 16))
-		feed_open_lbl.grid(row=1, column=0)
 
 	def make_button(self, text, master, cmd=None):
 		btn = tk.Button(text=text, master=master, padx=10, pady=10, bg="sky blue", font=('Comic Sans MS', 16), command=cmd)
@@ -66,14 +63,17 @@ class App(tk.Frame):
 			win32gui.ShowWindow(video, win32con.SW_MINIMIZE)
 			btn["text"] = "Show Feed"
 
+	def populate_skeleton_listbox(self):
+		for skele in main.skeletons_array:
+			self.skeleton_list.insert(tk.END, skele)
+
 	def quit_app(self):
 		os._exit(1)
 
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	app = App(root)
+	app = App(root, fullscreen=True)
 	thread1 = threading.Thread(target=main.main_loop, args=[main.argDict])
 	thread1.start()
 	root.mainloop()
-	# main.main_loop(show_video=True)
