@@ -1,6 +1,7 @@
 import Tkinter as tk
 import threading
 import win32gui, win32con
+import os
 
 import main
 
@@ -33,6 +34,8 @@ class App(tk.Frame):
 
 		reset_btn = self.make_button("Reset Faces", top_btn_row, cmd=main.reset_skeletons_array)
 		reset_btn.grid(row=0, column=0, padx=20, pady=20)
+		reset_btn = self.make_button("Exit", top_btn_row, cmd=self.quit_app)
+		reset_btn.grid(row=0, column=1, padx=20, pady=20)
 
 		log_btn = self.make_button("Logs", top_btn_row)
 		log_btn.grid(row=1, column=0, padx=20, pady=20)
@@ -62,6 +65,9 @@ class App(tk.Frame):
 		else:
 			win32gui.ShowWindow(video, win32con.SW_MINIMIZE)
 			btn["text"] = "Show Feed"
+
+	def quit_app(self):
+		os._exit(1)
 
 
 if __name__ == "__main__":
