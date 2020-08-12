@@ -26,7 +26,7 @@ print("Facial recognition initialized")
 
 
 def recognize_face(frame, skeletons_array, skele_index):
-	current_skeleton = skeletons_array[skele_index]
+	current_skeleton = skeletons_array.value[skele_index]
 
 	small_frame = shrink_screen(frame, current_skeleton.coords)
 
@@ -50,13 +50,14 @@ def recognize_face(frame, skeletons_array, skele_index):
 				break
 
 			temp_name = known_face_names[index]
-			if temp_name in map(lambda x: x.name, skeletons_array):  # check that temp_name hasn't been used yet or else check next index
+			if temp_name in map(lambda x: x.name, skeletons_array.value):  # check that temp_name hasn't been used yet or else check next index
 				continue
 
 			name = temp_name  # after finding the highest value with unused name, break
 			break
 
-		skeletons_array[skele_index].set_name(name)
+		skeletons_array.value[skele_index].set_name(name)
+		skeletons_array.notify_observers()
 		print("found " + name)
 		break
 

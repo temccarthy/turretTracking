@@ -37,6 +37,7 @@ class App(tk.Frame):
 		reset_btn = self.make_button("Exit", top_btn_row, cmd=self.quit_app)
 		reset_btn.grid(row=0, column=1, padx=20, pady=20)
 
+		main.skeletons_array.register_callback(self.populate_skeleton_listbox)  # add listener
 		self.populate_skeleton_listbox()
 		self.skeleton_list.grid(row=2, column=0)
 		# master.rowconfigure(2, weight=1)
@@ -64,8 +65,14 @@ class App(tk.Frame):
 			btn["text"] = "Show Feed"
 
 	def populate_skeleton_listbox(self):
-		for skele in main.skeletons_array.value:
-			self.skeleton_list.insert(tk.END, skele)
+		self.skeleton_list.delete(0, tk.END)
+		for index,skele in enumerate(main.skeletons_array.value):
+			line = "Skeleton " + str(index)
+			if skele.present:
+				line += str(" - " + skele.name)
+			else:
+				line += str(" - empty")
+			self.skeleton_list.insert(tk.END, line)
 
 	def quit_app(self):
 		os._exit(1)
@@ -73,7 +80,7 @@ class App(tk.Frame):
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	app = App(root, fullscreen=True)
+	app = App(root, fullscreen=False)
 	thread1 = threading.Thread(target=main.main_loop, args=[main.argDict])
 	thread1.start()
 	root.mainloop()

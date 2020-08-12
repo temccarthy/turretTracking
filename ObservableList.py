@@ -11,11 +11,12 @@ class ObservableList:
 	def value(self, new_value):
 		old_value = self._value
 		self._value = new_value
-		self._notify_observers(old_value, new_value)
+		self.notify_observers()
 
-	def _notify_observers(self, old_value, new_value):
+	def notify_observers(self):
 		for callback in self._callbacks:
-			callback(old_value, new_value)
+			callback()
 
 	def register_callback(self, callback):
+		print("adding" + str(callback))
 		self._callbacks.append(callback)

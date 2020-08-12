@@ -16,7 +16,8 @@ def video_handler_function(frame):
 	for index, skele in enumerate(skeletons_array.value):
 		if skele.present:
 			if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):  # if unnamed skeleton
-				recognize_face(video, skeletons_array.value, index)
+				recognize_face(video, skeletons_array, index)
+				skeletons_array.notify_observers()
 			else:  # if named skeleton
 				uv_coords = uvMap(skeletons_array.value[index].coords)
 				# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
@@ -25,6 +26,7 @@ def video_handler_function(frame):
 		elif not skele.present and skele.name != "":
 			print("lost " + skeletons_array.value[index].name + "'s skeleton")
 			skeletons_array.value[index].reset_name()
+			skeletons_array.notify_observers()
 
 	try:
 		if argDict["show_video"]:
