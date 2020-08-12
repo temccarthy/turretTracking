@@ -78,7 +78,7 @@ def reset_skeletons_array():
 skeletons_array = []
 reset_skeletons_array()
 argDict = {
-	"show_video": True
+	"show_video": False
 }
 
 

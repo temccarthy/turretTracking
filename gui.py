@@ -1,5 +1,6 @@
 import Tkinter as tk
 import threading
+import win32gui, win32con
 
 import main
 
@@ -42,7 +43,7 @@ class App(tk.Frame):
 		feed_row.grid(row=2, column=0)
 		master.rowconfigure(2, weight=1)
 
-		show_feed_btn = self.make_button("Show Feed", feed_row, cmd=self.flip_show_video)
+		show_feed_btn = self.make_button("Show Feed", feed_row, cmd=lambda: self.flip_show_video(show_feed_btn))
 		show_feed_btn.grid(row=0, column=0)
 		feed_open_lbl = tk.Label(master=feed_row, text="somthing reallllllllllly long", bg="white", font=("Comic Sans MS", 16))
 		feed_open_lbl.grid(row=1, column=0)
@@ -51,10 +52,16 @@ class App(tk.Frame):
 		btn = tk.Button(text=text, master=master, padx=10, pady=10, bg="sky blue", font=('Comic Sans MS', 16), command=cmd)
 		return btn
 
-	def flip_show_video(self):
+	def flip_show_video(self, btn):
 		# showing and hiding window here
 		main.argDict["show_video"] = not main.argDict["show_video"]
-
+		video = win32gui.FindWindow(None, "KINECT Video Stream")
+		if main.argDict["show_video"]:
+			win32gui.ShowWindow(video, win32con.SW_SHOWDEFAULT)
+			btn["text"] = "Hide Feed"
+		else:
+			win32gui.ShowWindow(video, win32con.SW_MINIMIZE)
+			btn["text"] = "Show Feed"
 
 
 if __name__ == "__main__":
