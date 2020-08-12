@@ -2,6 +2,7 @@ from pykinect import nui
 from pykinect.nui import JointId
 from skele import Skeleton
 from recog import recognize_face, uvMap
+from ObservableList import ObservableList
 
 import cv2
 import numpy as np
@@ -12,18 +13,18 @@ def video_handler_function(frame):
 	video = np.empty((480, 640, 4), np.uint8)
 	frame.image.copy_bits(video.ctypes.data)
 
-	for index, skele in enumerate(skeletons_array):
+	for index, skele in enumerate(skeletons_array.value):
 		if skele.present:
 			if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):  # if unnamed skeleton
-				recognize_face(video, skeletons_array, index)
+				recognize_face(video, skeletons_array.value, index)
 			else:  # if named skeleton
-				uv_coords = uvMap(skeletons_array[index].coords)
+				uv_coords = uvMap(skeletons_array.value[index].coords)
 				# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
-				cv2.putText(video, skeletons_array[index].name, uv_coords,
+				cv2.putText(video, skeletons_array.value[index].name, uv_coords,
 							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 		elif not skele.present and skele.name != "":
-			print("lost " + skeletons_array[index].name + "'s skeleton")
-			skeletons_array[index].reset_name()
+			print("lost " + skeletons_array.value[index].name + "'s skeleton")
+			skeletons_array.value[index].reset_name()
 
 	try:
 		if argDict["show_video"]:
@@ -37,7 +38,7 @@ def video_handler_function(frame):
 #  the same behavior
 def skeleton_frame_function(frame):
 	for index, skeleton in enumerate(frame.SkeletonData):
-		skeletons_array[index].set_skeleton_data(skeleton)
+		skeletons_array.value[index].set_skeleton_data(skeleton)
 
 
 def main_loop(argDict):
@@ -69,13 +70,13 @@ def main_loop(argDict):
 
 def reset_skeletons_array():
 	print("Resetting skeletons_array")
-	del skeletons_array[:]
+	del skeletons_array.value[:]
 	for i in range(6):
-		skeletons_array.append(Skeleton("", False, (0, 0, 0)))
+		skeletons_array.value.append(Skeleton("", False, (0, 0, 0)))
 
 
 # initialize skeletons_array
-skeletons_array = []
+skeletons_array = ObservableList()
 reset_skeletons_array()
 argDict = {
 	"show_video": True,

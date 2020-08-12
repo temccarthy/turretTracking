@@ -64,7 +64,7 @@ class App(tk.Frame):
 			btn["text"] = "Show Feed"
 
 	def populate_skeleton_listbox(self):
-		for skele in main.skeletons_array:
+		for skele in main.skeletons_array.value:
 			self.skeleton_list.insert(tk.END, skele)
 
 	def quit_app(self):
