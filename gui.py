@@ -12,7 +12,7 @@ class App(tk.Frame):
 	def __init__(self, master=None, fullscreen=False):
 		tk.Frame.__init__(self, master)
 		self.master = master  # master frame
-		self.skeleton_list = tk.Listbox(master, height=6, width=50) # skeleton list
+		self.skeleton_list = tk.Listbox(master, height=6, width=20, font=("Comic Sans MS", 16)) # skeleton list
 
 		if fullscreen:
 			master.attributes("-fullscreen", True)
@@ -67,7 +67,7 @@ class App(tk.Frame):
 	def populate_skeleton_listbox(self):
 		self.skeleton_list.delete(0, tk.END)
 		for index,skele in enumerate(main.skeletons_array.value):
-			line = "Skeleton " + str(index)
+			line = "Skeleton " + str(index+1)
 			if skele.present:
 				line += str(" - " + skele.name)
 			else:
