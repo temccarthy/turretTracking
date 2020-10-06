@@ -17,7 +17,8 @@ def calcRotation(coords):
     y = kinect_y*math.cos(p) - kinect_z*math.sin(p) - trans
     z = kinect_y*math.sin(p) + kinect_z*math.cos(p)
 
-    pitch = math.atan2(x,math.sqrt(x**2+z**2))
+    #
+    pitch = math.atan2(y,math.sqrt(x**2+z**2))
     yaw = math.atan2(y,z)
 
     # matrix math
