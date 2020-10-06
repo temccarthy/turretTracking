@@ -21,7 +21,12 @@ def video_handler_function(frame):
 			else:  # if named skeleton
 				uv_coords = uvMap(skeletons_array.value[index].coords)
 				# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
-				cv2.putText(video, skeletons_array.value[index].name, uv_coords,
+				x = int(skeletons_array.value[index].coords[0])
+				y = int(skeletons_array.value[index].coords[1])
+				z = int(skeletons_array.value[index].coords[2])
+				
+				
+				cv2.putText(video, str(x) + " " + str(y) + " " + str(z), uv_coords,
 							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 		elif not skele.present and skele.name != "":
 			print("lost " + skeletons_array.value[index].name + "'s skeleton")
