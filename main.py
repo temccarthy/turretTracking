@@ -1,5 +1,4 @@
 from pykinect import nui
-from pykinect.nui import JointId
 from skele import Skeleton
 from recog import recognize_face, uvMap
 from ObservableList import ObservableList
