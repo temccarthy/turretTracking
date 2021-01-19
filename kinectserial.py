@@ -1,9 +1,12 @@
 from serial import Serial
 import time
 
-arduino = Serial('/dev/cu.usbserial-1420', 115200, timeout=.1)
-time.sleep(1)  # give the connection a second to settle
+# arduino = Serial('/dev/cu.usbserial-1420', 115200, timeout=.1)
+# time.sleep(1)  # give the connection a second to settle
 
+
+def send_coords(pitch, yaw):
+    arduino.write("p" + str(pitch) + "y" + str(yaw) + "\n")
 
 if __name__ == "__main__":
     while True:

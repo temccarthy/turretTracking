@@ -17,10 +17,14 @@ def calcRotation(coords):
     y = kinect_y*math.cos(p) - kinect_z*math.sin(p) - trans
     z = kinect_y*math.sin(p) + kinect_z*math.cos(p)
 
-    #
+    # calculate angles
     pitch = math.atan2(y,math.sqrt(x**2+z**2))
-    yaw = math.atan2(y,z)
+    yaw = math.atan2(x,z)
 
-    # matrix math
+    # convert to degrees for serialization
+    pitch = pitch*180/math.pi
+    yaw = yaw*180/math.pi
+
+    print(pitch, yaw)
 
     return pitch, yaw
