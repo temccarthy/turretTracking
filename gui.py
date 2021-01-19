@@ -64,6 +64,7 @@ class App(tk.Frame):
 			win32gui.ShowWindow(video, win32con.SW_MINIMIZE)
 			btn["text"] = "Show Feed"
 
+	#relies on observable list being updated and sending call to this function
 	def populate_skeleton_listbox(self):
 		self.skeleton_list.delete(0, tk.END)
 		for index,skele in enumerate(main.skeletons_array.value):

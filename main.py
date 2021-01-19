@@ -2,6 +2,7 @@ from pykinect import nui
 from skele import Skeleton
 from recog import recognize_face, uvMap
 from ObservableList import ObservableList
+from matrix import calcRotation
 
 import cv2
 import numpy as np
@@ -20,7 +21,12 @@ def video_handler_function(frame):
 			else:  # if named skeleton
 				uv_coords = uvMap(skeletons_array.value[index].coords)
 				# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
-				cv2.putText(video, skeletons_array.value[index].name, uv_coords,
+				x = int(skeletons_array.value[index].coords[0])
+				y = int(skeletons_array.value[index].coords[1])
+				z = int(skeletons_array.value[index].coords[2])
+				
+
+				cv2.putText(video, str(x) + " " + str(y) + " " + str(z), uv_coords,
 							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 		elif not skele.present and skele.name != "":
 			print("lost " + skeletons_array.value[index].name + "'s skeleton")
@@ -58,7 +64,20 @@ def main_loop(argDict):
 
 		run = True
 		while run:
-
+			
+			if cv2.waitKey(1) & 0xFF == ord('c'):
+				shoot_coords = None
+				shoot_name = ""
+				for index,skele in enumerate(skeletons_array.value):
+					if skele.present and skele.name != "":
+						shoot_coords, shoot_name = skele.coords, skele.name
+						break
+				if shoot_coords is not None:
+					print("shooting " + shoot_name)
+					# calculate necessary pitch and yaw
+					pitch, yaw = calcRotation(shoot_coords)
+					# send to esp
+					
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				run = False
 			if cv2.waitKey(1) & 0xFF == ord(' '):
