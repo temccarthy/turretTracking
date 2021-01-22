@@ -1,4 +1,3 @@
-import cv2
 import face_recognition
 import math
 import os
@@ -9,6 +8,7 @@ print("Initializing facial recognition...")
 known_face_encodings = []
 known_face_names = []
 
+# walks through ./pics folder looking for named folders with faces
 for root, _, files in os.walk("./pics/"):
 	for f in files:
 		img = face_recognition.load_image_file(root + "/" + f)
@@ -79,6 +79,7 @@ def shrink_screen(frame, current_skeleton_coords):
 		return frame, (x, y)
 
 
+# maps xyz coord to screen uv
 def uvMap(coords):
 	WIDTH, HEIGHT = 640, 480  # camera dimensions
 	FOV_X, FOV_Y = math.radians(84.1), math.radians(53.8)  # camera FOVs

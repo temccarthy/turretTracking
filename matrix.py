@@ -1,8 +1,7 @@
-import numpy as np
 import math
 
-# takes in skeleton (which has a position)
-# returns the two rotational values of both servos
+
+# takes in xyz coords, returns the two rotational values of pitch and yaw servos
 def calcRotation(coords):
     # coords from kinect
     kinect_x = coords[0]
