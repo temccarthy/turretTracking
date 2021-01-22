@@ -1,9 +1,8 @@
 from pykinect import nui
 from skele import Skeleton
-from recog import recognize_face, uvMap
+from image import recognize_face, uvMap
 from ObservableList import ObservableList
 from matrix import calcRotation
-from kinectserial import send_coords
 
 import cv2
 import numpy as np
@@ -16,6 +15,18 @@ def reset_skeletons_array():
 		skeletons_array.value.append(Skeleton("", False, (0, 0, 0)))
 
 
+def draw_skele_data(index, video):
+	uv_coords = uvMap(skeletons_array.value[index].coords)
+	# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
+	x = int(skeletons_array.value[index].coords[0])
+	y = int(skeletons_array.value[index].coords[1])
+	z = int(skeletons_array.value[index].coords[2])
+
+	print_coords = calcRotation((x, y, z))  # str(x) + " " + str(y) + " " + str(z)
+	cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
+				cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+
 def video_handler_function(frame):
 	video = np.empty((480, 640, 4), np.uint8)
 	frame.image.copy_bits(video.ctypes.data)
@@ -23,20 +34,14 @@ def video_handler_function(frame):
 	for index, skele in enumerate(skeletons_array.value):
 		if skele.present:
 			# if unnamed skeleton, try to recognize
-			if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):
+
+			if (skele.name == "" or (skele.name == "Unknown" and skele.tries < 3)) and argDict["recognize_faces"]:
 				recognize_face(video, skeletons_array, index)
 				skeletons_array.notify_observers()
+
 			# if named skeleton, display coordinates on screen
 			else:
-				uv_coords = uvMap(skeletons_array.value[index].coords)
-				# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
-				x = int(skeletons_array.value[index].coords[0])
-				y = int(skeletons_array.value[index].coords[1])
-				z = int(skeletons_array.value[index].coords[2])
-				
-				print_coords = calcRotation((x, y, z))   # str(x) + " " + str(y) + " " + str(z)
-				cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
-							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+				draw_skele_data(index, video)
 
 		# if named skeleton moves out of frame, remove them from array
 		elif not skele.present and skele.name != "":
@@ -81,23 +86,24 @@ def main_loop(argDict):
 			shoot_name = ""
 
 			# pick someone to shoot
-			for index,skele in enumerate(skeletons_array.value):
-				if skele.present and skele.name != "":
+			for index, skele in enumerate(skeletons_array.value):
+				if skele.present: # and skele.name != "":
 					shoot_coords, shoot_name = skele.coords, skele.name
 					break
-			
+
 			if shoot_coords is not None:
 				# print("shooting " + shoot_name)
 				# calculate necessary pitch and yaw
 				pitch, yaw = calcRotation(shoot_coords)
 				# print(pitch, yaw)
 				# send to esp
-				send_coords(pitch, yaw)
+				if argDict["arduino_connected"]:
+					send_coords(pitch, yaw)
 
 			# hot keys
-			if cv2.waitKey(1) & 0xFF == ord('q'): # q quits
+			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quits
 				run = False
-			if cv2.waitKey(1) & 0xFF == ord(' '): # space bar resets skeletons
+			if cv2.waitKey(1) & 0xFF == ord(' '):  # space bar resets skeletons
 				reset_skeletons_array()
 
 		kinect.close()
@@ -111,8 +117,12 @@ reset_skeletons_array()
 argDict = {
 	"show_video": True,
 	"kinect_error": False,
-	"connect_arduino": True
+	"recognize_faces": False,
+	"arduino_connected": False
 }
 
 if __name__ == "__main__":
+	if argDict["arduino_connected"]:
+		from kinectserial import send_coords
+
 	main_loop(argDict)
