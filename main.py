@@ -9,26 +9,36 @@ import cv2
 import numpy as np
 
 
+def reset_skeletons_array():
+	print("Resetting skeletons_array")
+	del skeletons_array.value[:]
+	for i in range(6):
+		skeletons_array.value.append(Skeleton("", False, (0, 0, 0)))
+
+
 def video_handler_function(frame):
-	# this might be slow, maybe move to detect face if not showing stream
 	video = np.empty((480, 640, 4), np.uint8)
 	frame.image.copy_bits(video.ctypes.data)
 
 	for index, skele in enumerate(skeletons_array.value):
 		if skele.present:
-			if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):  # if unnamed skeleton
+			# if unnamed skeleton, try to recognize
+			if skele.name == "" or (skele.name == "Unknown" and skele.tries < 3):
 				recognize_face(video, skeletons_array, index)
 				skeletons_array.notify_observers()
-			else:  # if named skeleton
+			# if named skeleton, display coordinates on screen
+			else:
 				uv_coords = uvMap(skeletons_array.value[index].coords)
 				# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
 				x = int(skeletons_array.value[index].coords[0])
 				y = int(skeletons_array.value[index].coords[1])
 				z = int(skeletons_array.value[index].coords[2])
 				
-				print_coords = calcRotation((x,y,z))#str(x) + " " + str(y) + " " + str(z)
+				print_coords = calcRotation((x, y, z))   # str(x) + " " + str(y) + " " + str(z)
 				cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
 							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+		# if named skeleton moves out of frame, remove them from array
 		elif not skele.present and skele.name != "":
 			print("lost " + skeletons_array.value[index].name + "'s skeleton")
 			skeletons_array.value[index].reset_name()
@@ -52,27 +62,30 @@ def skeleton_frame_function(frame):
 def main_loop(argDict):
 	print("Initializing Kinect...")
 	with nui.Runtime() as kinect:
+		# initialize kinect functions
 		kinect.skeleton_engine.set_enabled(True)
-		kinect.skeleton_frame_ready += skeleton_frame_function  # async loop 1
+		kinect.skeleton_frame_ready += skeleton_frame_function  # skeleton async loop
 
-		kinect.video_frame_ready += video_handler_function  # async loop 2
+		kinect.video_frame_ready += video_handler_function  # video async loop
 		kinect.video_stream.open(nui.ImageStreamType.Video, 2, nui.ImageResolution.Resolution640x480,
 								 nui.ImageType.Color)
 
+		# open cv2 window of kinect video
 		cv2.namedWindow('KINECT Video Stream', cv2.WINDOW_AUTOSIZE)
 
 		print("Kinect Initialized")
 
 		run = True
 		while run:
-			
-			#if cv2.waitKey(1) & 0xFF == ord('c'):
 			shoot_coords = None
 			shoot_name = ""
+
+			# pick someone to shoot
 			for index,skele in enumerate(skeletons_array.value):
 				if skele.present and skele.name != "":
 					shoot_coords, shoot_name = skele.coords, skele.name
 					break
+			
 			if shoot_coords is not None:
 				# print("shooting " + shoot_name)
 				# calculate necessary pitch and yaw
@@ -80,10 +93,11 @@ def main_loop(argDict):
 				# print(pitch, yaw)
 				# send to esp
 				send_coords(pitch, yaw)
-					
-			if cv2.waitKey(1) & 0xFF == ord('q'):
+
+			# hot keys
+			if cv2.waitKey(1) & 0xFF == ord('q'): # q quits
 				run = False
-			if cv2.waitKey(1) & 0xFF == ord(' '):
+			if cv2.waitKey(1) & 0xFF == ord(' '): # space bar resets skeletons
 				reset_skeletons_array()
 
 		kinect.close()
@@ -91,21 +105,14 @@ def main_loop(argDict):
 		print("Exiting")
 
 
-def reset_skeletons_array():
-	print("Resetting skeletons_array")
-	del skeletons_array.value[:]
-	for i in range(6):
-		skeletons_array.value.append(Skeleton("", False, (0, 0, 0)))
-
-
 # initialize skeletons_array
 skeletons_array = ObservableList()
 reset_skeletons_array()
 argDict = {
 	"show_video": True,
-	"kinect_error": False
+	"kinect_error": False,
+	"connect_arduino": True
 }
-
 
 if __name__ == "__main__":
 	main_loop(argDict)
