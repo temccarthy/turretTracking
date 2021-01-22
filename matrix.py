@@ -10,7 +10,7 @@ def calcRotation(coords):
     kinect_z = coords[2]
     # kinect rotation angle, translation dist
     p = 0 # determine
-    trans = 0 # determine
+    trans = -11 # determine
 
     # coords for inverse kinematics
     x = kinect_x
@@ -22,9 +22,7 @@ def calcRotation(coords):
     yaw = math.atan2(x,z)
 
     # convert to degrees for serialization
-    pitch = pitch*180/math.pi
-    yaw = yaw*180/math.pi
-
-    print(pitch, yaw)
+    pitch = int(pitch*180/math.pi)
+    yaw = int(yaw*180/math.pi)
 
     return pitch, yaw

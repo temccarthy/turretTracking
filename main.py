@@ -26,9 +26,9 @@ def video_handler_function(frame):
 				y = int(skeletons_array.value[index].coords[1])
 				z = int(skeletons_array.value[index].coords[2])
 				
-
-				cv2.putText(video, str(x) + " " + str(y) + " " + str(z), uv_coords,
-							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+				print_coords = calcRotation((x,y,z))#str(x) + " " + str(y) + " " + str(z)
+				cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
+							cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 		elif not skele.present and skele.name != "":
 			print("lost " + skeletons_array.value[index].name + "'s skeleton")
 			skeletons_array.value[index].reset_name()
@@ -74,12 +74,12 @@ def main_loop(argDict):
 					shoot_coords, shoot_name = skele.coords, skele.name
 					break
 			if shoot_coords is not None:
-				print("shooting " + shoot_name)
+				# print("shooting " + shoot_name)
 				# calculate necessary pitch and yaw
 				pitch, yaw = calcRotation(shoot_coords)
+				# print(pitch, yaw)
 				# send to esp
-				# send_coords(pitch, yaw)
-
+				send_coords(pitch, yaw)
 					
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				run = False
