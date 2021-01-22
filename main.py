@@ -24,7 +24,7 @@ def draw_skele_data(index, video):
 
 	print_coords = calcRotation((x, y, z))  # str(x) + " " + str(y) + " " + str(z)
 	cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
-				cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+				cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
 
 
 def video_handler_function(frame):
@@ -82,23 +82,32 @@ def main_loop(argDict):
 
 		run = True
 		while run:
-			shoot_coords = None
-			shoot_name = ""
+			aim_coords = None
+			aim_name = ""
 
 			# pick someone to shoot
 			for index, skele in enumerate(skeletons_array.value):
 				if skele.present: # and skele.name != "":
-					shoot_coords, shoot_name = skele.coords, skele.name
+					aim_coords, aim_name = skele.coords, skele.name
 					break
 
-			if shoot_coords is not None:
-				# print("shooting " + shoot_name)
+			if aim_coords is not None:
+				# print("shooting " + aim_name)
+
 				# calculate necessary pitch and yaw
-				pitch, yaw = calcRotation(shoot_coords)
+				pitch, yaw = calcRotation(aim_coords)
 				# print(pitch, yaw)
+
 				# send to esp
 				if argDict["arduino_connected"]:
 					send_coords(pitch, yaw)
+
+					if cv2.waitKey(1) & 0xFF == ord('s'):
+						shoot()
+
+					if cv2.waitKey(1) & 0xFF == ord('r'):
+						reload()
+
 
 			# hot keys
 			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quits
@@ -123,6 +132,6 @@ argDict = {
 
 if __name__ == "__main__":
 	if argDict["arduino_connected"]:
-		from kinectserial import send_coords
+		from kinectserial import send_coords, shoot, reload
 
 	main_loop(argDict)

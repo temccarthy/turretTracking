@@ -8,8 +8,14 @@ time.sleep(1)  # give the connection a second to settle
 def send_coords(pitch, yaw):
     arduino.write("p" + str(pitch) + "y" + str(yaw) + "\n")
 
+
 def reload():
     arduino.write("reload")  # idk
+
+
+def shoot():
+    arduino.write("something") # idk
+
 
 # serial tests
 if __name__ == "__main__":
