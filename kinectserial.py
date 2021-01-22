@@ -9,12 +9,20 @@ def send_coords(pitch, yaw):
     arduino.write("p" + str(pitch) + "y" + str(yaw) + "\n")
 
 
-def reload():
-    arduino.write("reload")  # idk
+def cock_back():
+    arduino.write("cockback")  # idk
 
 
 def shoot():
     arduino.write("something") # idk
+
+
+def reload_mag():
+    arduino.write("something")  # idk
+
+
+def finish_reload():
+    arduino.write("something")  # idk
 
 
 # serial tests

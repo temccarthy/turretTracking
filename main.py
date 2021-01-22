@@ -100,17 +100,23 @@ def main_loop(argDict):
 
 				# send to esp
 				if argDict["arduino_connected"]:
-					send_coords(pitch, yaw)
+					ser.send_coords(pitch, yaw)
 
 					if cv2.waitKey(1) & 0xFF == ord('s'):
-						shoot()
+						ser.shoot()
+
+					if cv2.waitKey(1) & 0xFF == ord('c'):
+						ser.cock_back()
 
 					if cv2.waitKey(1) & 0xFF == ord('r'):
-						reload()
+						ser.reload_mag()
+
+					if cv2.waitKey(1) & 0xFF == ord('t'):
+						ser.finish_reload()
 
 
 			# hot keys
-			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quits
+			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quit application
 				run = False
 			if cv2.waitKey(1) & 0xFF == ord(' '):  # space bar resets skeletons
 				reset_skeletons_array()
@@ -132,6 +138,6 @@ argDict = {
 
 if __name__ == "__main__":
 	if argDict["arduino_connected"]:
-		from kinectserial import send_coords, shoot, reload
+		import kinectserial as ser
 
 	main_loop(argDict)
