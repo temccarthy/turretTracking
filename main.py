@@ -15,16 +15,19 @@ def reset_skeletons_array():
 		skeletons_array.value.append(Skeleton("", False, (0, 0, 0)))
 
 
-def draw_skele_data(index, video):
-	uv_coords = uvMap(skeletons_array.value[index].coords)
+def draw_skele_data(skele, video):
+	uv_coords = uvMap(skele.coords)
 	# cv2.circle(video, uv_coords, 20, (255, 0, 0), 2)
-	x = int(skeletons_array.value[index].coords[0])
-	y = int(skeletons_array.value[index].coords[1])
-	z = int(skeletons_array.value[index].coords[2])
+	x = int(skele.coords[0])
+	y = int(skele.coords[1])
+	z = int(skele.coords[2])
 
 	print_coords = calcRotation((x, y, z))  # str(x) + " " + str(y) + " " + str(z)
 	cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
 				cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+
+def skele_unrecognized(skele):
+	return (skele.name == "" or (skele.name == "Unknown" and skele.tries < 3)) and argDict["recognize_faces"]
 
 
 def video_handler_function(frame):
@@ -33,15 +36,15 @@ def video_handler_function(frame):
 
 	for index, skele in enumerate(skeletons_array.value):
 		if skele.present:
-			# if unnamed skeleton, try to recognize
 
-			if (skele.name == "" or (skele.name == "Unknown" and skele.tries < 3)) and argDict["recognize_faces"]:
+			# if unrecognized skeleton, try to recognize
+			if skele_unrecognized(skele):
 				recognize_face(video, skeletons_array, index)
 				skeletons_array.notify_observers()
 
-			# if named skeleton, display coordinates on screen
+			# if recognized skeleton, display coordinates on screen
 			else:
-				draw_skele_data(index, video)
+				draw_skele_data(skele, video)
 
 		# if named skeleton moves out of frame, remove them from array
 		elif not skele.present and skele.name != "":
@@ -131,7 +134,6 @@ skeletons_array = ObservableList()
 reset_skeletons_array()
 argDict = {
 	"show_video": True,
-	"kinect_error": False,
 	"recognize_faces": False,
 	"arduino_connected": False
 }
