@@ -18,11 +18,11 @@ def shoot():
 
 
 def reload_mag():
-    arduino.write("something")  # idk
+    arduino.write("r\n")
 
 
 def finish_reload():
-    arduino.write("something")  # idk
+    arduino.write("f\n")
 
 
 # serial tests

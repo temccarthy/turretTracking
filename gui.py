@@ -4,7 +4,7 @@ import win32gui, win32con
 import os
 
 import main
-
+import kinectserial as ks
 
 class App(tk.Frame):
 	font = "Comic Sans MS"
@@ -37,14 +37,21 @@ class App(tk.Frame):
 		reset_btn = self.make_button("Exit", top_btn_row, cmd=self.quit_app)
 		reset_btn.grid(row=0, column=1, padx=20, pady=20)
 
+		mid_btn_row = tk.Frame(master)
+		mid_btn_row.grid(row=2, column=0)
+		master.rowconfigure(2, weight=1)
+
+		reset_btn = self.make_button("Reload", mid_btn_row, cmd=lambda: self.reloading(reset_btn))
+		reset_btn.grid(row=0, column=0, padx=20, pady=20)
+
 		main.skeletons_array.register_callback(self.populate_skeleton_listbox)  # add listener
 		self.populate_skeleton_listbox()
-		self.skeleton_list.grid(row=2, column=0)
+		self.skeleton_list.grid(row=3, column=0)
 		# master.rowconfigure(2, weight=1)
 
 		feed_row = tk.Frame(master, background="red")
-		feed_row.grid(row=3, column=0)
-		master.rowconfigure(3, weight=1)
+		feed_row.grid(row=4, column=0)
+		master.rowconfigure(4, weight=1)
 
 		show_feed_btn = self.make_button("Hide Feed", feed_row, cmd=lambda: self.flip_show_video(show_feed_btn))
 		show_feed_btn.grid(row=0, column=0)
@@ -63,6 +70,15 @@ class App(tk.Frame):
 		else:
 			win32gui.ShowWindow(video, win32con.SW_MINIMIZE)
 			btn["text"] = "Show Feed"
+
+	def reloading(self, btn):
+		if btn["text"] == "Reload":
+			ks.reload_mag()
+			btn["text"] = "Finish Reload"
+		else:
+			ks.finish_reload()
+			btn["text"] = "Reload"
+
 
 	# relies on observable list being updated and sending call to this function
 	def populate_skeleton_listbox(self):
