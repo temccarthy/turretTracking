@@ -1,7 +1,7 @@
 from serial import Serial
 import time
 
-arduino = Serial('COM5', 500000, timeout=.1)
+arduino = Serial('COM6', 500000, timeout=.1)
 time.sleep(1)  # give the connection a second to settle
 
 
@@ -14,7 +14,7 @@ def cock_back():
 
 
 def shoot():
-    arduino.write("something") # idk
+    arduino.write("s\n") # idk
 
 
 def reload_mag():

@@ -43,6 +43,8 @@ class App(tk.Frame):
 
 		reset_btn = self.make_button("Reload", mid_btn_row, cmd=lambda: self.reloading(reset_btn))
 		reset_btn.grid(row=0, column=0, padx=20, pady=20)
+		shoot_btn = self.make_button("Shoot", mid_btn_row, cmd=ks.shoot)
+		shoot_btn.grid(row=0, column=1, padx=20, pady=20)
 
 		main.skeletons_array.register_callback(self.populate_skeleton_listbox)  # add listener
 		self.populate_skeleton_listbox()

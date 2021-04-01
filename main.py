@@ -3,6 +3,7 @@ from skele import Skeleton
 from image import recognize_face, uvMap
 from ObservableList import ObservableList
 from matrix import calcRotation
+import kinectserial as ks
 
 import cv2
 import numpy as np
@@ -102,20 +103,19 @@ def main_loop(argDict):
 				# print(pitch, yaw)
 
 				# send to esp
-				if argDict["arduino_connected"]:
-					ser.send_coords(pitch, yaw)
+				ks.send_coords(pitch, yaw)
 
-					if cv2.waitKey(1) & 0xFF == ord('s'):
-						ser.shoot()
-
-					if cv2.waitKey(1) & 0xFF == ord('c'):
-						ser.cock_back()
-
-					if cv2.waitKey(1) & 0xFF == ord('r'):
-						ser.reload_mag()
-
-					if cv2.waitKey(1) & 0xFF == ord('t'):
-						ser.finish_reload()
+				# if cv2.waitKey(1) & 0xFF == ord('s'):
+				# 	ks.shoot()
+				#
+				# if cv2.waitKey(1) & 0xFF == ord('c'):
+				# 	ks.cock_back()
+				#
+				# if cv2.waitKey(1) & 0xFF == ord('r'):
+				# 	ks.reload_mag()
+				#
+				# if cv2.waitKey(1) & 0xFF == ord('f'):
+				# 	ks.finish_reload()
 
 
 			# hot keys
@@ -135,11 +135,7 @@ reset_skeletons_array()
 argDict = {
 	"show_video": True,
 	"recognize_faces": False,
-	"arduino_connected": False
 }
 
 if __name__ == "__main__":
-	if argDict["arduino_connected"]:
-		import kinectserial as ser
-
 	main_loop(argDict)
