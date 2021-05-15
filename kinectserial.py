@@ -14,7 +14,7 @@ def cock_back():
 
 
 def shoot():
-    arduino.write("s\n") # idk
+    arduino.write("s\n")  # idk
 
 
 def reload_mag():
@@ -23,6 +23,10 @@ def reload_mag():
 
 def finish_reload():
     arduino.write("f\n")
+
+
+def retract():
+    arduino.write("x\n")
 
 
 # serial tests
