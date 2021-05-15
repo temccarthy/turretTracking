@@ -4,6 +4,7 @@ from image import recognize_face, uvMap
 from ObservableList import ObservableList
 from matrix import calcRotation
 import kinectserial as ks
+from adafruit import Fruit
 
 import cv2
 import numpy as np
@@ -69,6 +70,8 @@ def skeleton_frame_function(frame):
 
 
 def main_loop(argDict):
+	print("connecting to adafruit")
+	fruit = Fruit("creds.txt")
 	print("Initializing Kinect...")
 	with nui.Runtime() as kinect:
 		# initialize kinect functions
@@ -86,37 +89,9 @@ def main_loop(argDict):
 
 		run = True
 		while run:
-			aim_coords = None
-			aim_name = ""
-
-			# pick someone to shoot
-			for index, skele in enumerate(skeletons_array.value):
-				if skele.present: # and skele.name != "":
-					aim_coords, aim_name = skele.coords, skele.name
-					break
-
-			if aim_coords is not None:
-				# print("shooting " + aim_name)
-
-				# calculate necessary pitch and yaw
-				pitch, yaw = calcRotation(aim_coords)
-				# print(pitch, yaw)
-
-				# send to esp
-				ks.send_coords(pitch, yaw)
-
-				# if cv2.waitKey(1) & 0xFF == ord('s'):
-				# 	ks.shoot()
-				#
-				# if cv2.waitKey(1) & 0xFF == ord('c'):
-				# 	ks.cock_back()
-				#
-				# if cv2.waitKey(1) & 0xFF == ord('r'):
-				# 	ks.reload_mag()
-				#
-				# if cv2.waitKey(1) & 0xFF == ord('f'):
-				# 	ks.finish_reload()
-
+			name = fruit.get_next()
+			if name == "anyone":
+				print("shot anyone")
 
 			# hot keys
 			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quit application
