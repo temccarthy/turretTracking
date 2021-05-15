@@ -1,6 +1,6 @@
 from pykinect import nui
 from skele import Skeleton
-from image import recognize_face, uvMap
+from image import recognize_face, uvMap, known_face_names
 from ObservableList import ObservableList
 from matrix import calcRotation
 import kinectserial as ks
@@ -92,6 +92,24 @@ def main_loop(argDict):
 			name = fruit.get_next()
 			if name == "anyone":
 				print("shot anyone")
+				aim_coords = None
+				# pick someone to shoot
+				for index, skele in enumerate(skeletons_array.value):
+					if skele.present:  # and skele.name != "":
+						aim_coords, aim_name = skele.coords, skele.name
+						break
+				if aim_coords is not None:
+					# print("shooting " + aim_name)
+					# calculate necessary pitch and yaw
+					pitch, yaw = calcRotation(aim_coords)
+					ks.send_coords(pitch, yaw)
+					# print(pitch, yaw)
+			if name == "unknown":
+				print("shot unknown")
+			if name == "everyone":
+				print("shot everyone")
+			if name in known_face_names:  # fuzzy search probably
+				print("shot" + name)
 
 			# hot keys
 			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quit application
