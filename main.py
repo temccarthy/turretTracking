@@ -91,25 +91,36 @@ def main_loop(argDict):
 		while run:
 			name = fruit.get_next()
 			if name == "anyone":
-				print("shot anyone")
 				aim_coords = None
 				# pick someone to shoot
 				for index, skele in enumerate(skeletons_array.value):
 					if skele.present:  # and skele.name != "":
-						aim_coords, aim_name = skele.coords, skele.name
+						aim_coords = skele.coords
 						break
 				if aim_coords is not None:
-					# print("shooting " + aim_name)
-					# calculate necessary pitch and yaw
+					print("shot someone")
 					pitch, yaw = calcRotation(aim_coords)
 					ks.send_coords(pitch, yaw)
-					# print(pitch, yaw)
-			if name == "unknown":
+					ks.shoot()
+			elif name == "unknown":
 				print("shot unknown")
-			if name == "everyone":
+				for index, skele in enumerate(skeletons_array.value):
+					if skele.present and skele.name != "unknown":
+						pitch, yaw = calcRotation(skele.coords)
+						ks.send_coords(pitch, yaw)
+						ks.shoot()
+						break
+			elif name == "everyone":
+				for index, skele in enumerate(skeletons_array.value):
+					if skele.present:  # and skele.name != "":
+						pitch, yaw = calcRotation(skele.coords)
+						ks.send_coords(pitch, yaw)
+						ks.shoot()
 				print("shot everyone")
-			if name in known_face_names:  # fuzzy search probably
-				print("shot" + name)
+			else:
+				if name in known_face_names:  # fuzzy search probably
+					print("shot" + name)
+					# do laterrrr
 
 			# hot keys
 			if cv2.waitKey(1) & 0xFF == ord('q'):  # q quit application
