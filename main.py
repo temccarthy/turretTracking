@@ -93,10 +93,10 @@ def main_loop(argDict):
 			name = fruit.get_next()
 			if name == "anyone":
 				ks.cock_back()
-				sleep(2.5)
 				aim_coords = None
-				for i in range(100000):
+				for i in range(25000):
 					# pick someone to shoot
+					aim_coords = None
 					for index, skele in enumerate(skeletons_array.value):
 						if skele.present:  # and skele.name != "":
 							aim_coords = skele.coords
