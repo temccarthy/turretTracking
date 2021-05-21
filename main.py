@@ -5,6 +5,7 @@ from ObservableList import ObservableList
 from matrix import calcRotation
 import kinectserial as ks
 from adafruit import Fruit
+from time import sleep
 
 import cv2
 import numpy as np
@@ -91,17 +92,22 @@ def main_loop(argDict):
 		while run:
 			name = fruit.get_next()
 			if name == "anyone":
+				ks.cock_back()
+				sleep(2.5)
 				aim_coords = None
-				# pick someone to shoot
-				for index, skele in enumerate(skeletons_array.value):
-					if skele.present:  # and skele.name != "":
-						aim_coords = skele.coords
-						break
-				if aim_coords is not None:
-					print("shot someone")
-					pitch, yaw = calcRotation(aim_coords)
-					ks.send_coords(pitch, yaw)
+				for i in range(100000):
+					# pick someone to shoot
+					for index, skele in enumerate(skeletons_array.value):
+						if skele.present:  # and skele.name != "":
+							aim_coords = skele.coords
+							break
+					if aim_coords is not None:
+						pitch, yaw = calcRotation(aim_coords)
+						ks.send_coords(pitch, yaw)
+				if aim_coords is not None:	
+					print("shot someone")	
 					ks.shoot()
+				
 			elif name == "unknown":
 				print("shot unknown")
 				for index, skele in enumerate(skeletons_array.value):

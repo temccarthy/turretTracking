@@ -1,7 +1,7 @@
 from serial import Serial
 import time
 
-arduino = Serial('COM6', 500000, timeout=.1)
+arduino = Serial('COM3', 500000, timeout=.1)
 time.sleep(1)  # give the connection a second to settle
 
 
@@ -10,7 +10,7 @@ def send_coords(pitch, yaw):
 
 
 def cock_back():
-    arduino.write("cockback")  # idk
+    arduino.write("c")  # idk
 
 
 def shoot():
