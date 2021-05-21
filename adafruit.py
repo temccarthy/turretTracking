@@ -13,3 +13,12 @@ class Fruit:
             return self.aio.receive_next(u'Turret').value
         except ada.errors.RequestError:
             return None
+
+
+if __name__ == "__main__":
+    fruit = Fruit("creds.txt")
+
+    while True:
+        alexa = fruit.get_next()
+        if alexa is not None:
+            print(alexa)
