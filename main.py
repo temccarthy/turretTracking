@@ -5,7 +5,7 @@ from ObservableList import ObservableList
 from matrix import calcRotation
 import kinectserial as ks
 from adafruit import Fruit
-from time import sleep
+import random
 
 import cv2
 import numpy as np
@@ -29,8 +29,15 @@ def draw_skele_data(skele, video):
 	cv2.putText(video, str(print_coords[0]) + " " + str(print_coords[1]), uv_coords,
 				cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
 
+
 def skele_unrecognized(skele):
 	return (skele.name == "" or (skele.name == "Unknown" and skele.tries < 3)) and argDict["recognize_faces"]
+
+
+# randomly picks an index of one of the present skeletons
+def get_random_skele_index():
+	present_skele_indeces = [i for i, skele in enumerate(skeletons_array.values) if skele.present]
+	return random.choice(present_skele_indeces)
 
 
 def video_handler_function(frame):
@@ -90,25 +97,20 @@ def main_loop(argDict):
 
 		run = True
 		while run:
-			name = fruit.get_next()
-			if name == "anyone":
+			alexa_cmd = fruit.get_next()
+			if alexa_cmd == "anyone":
 				ks.cock_back()
-				aim_coords = None
-				for i in range(25000):
-					# pick someone to shoot
-					aim_coords = None
-					for index, skele in enumerate(skeletons_array.value):
-						if skele.present:  # and skele.name != "":
-							aim_coords = skele.coords
+				shoot_index = get_random_skele_index()  # pick a random present skeleton to shoot
+				for index, skele in enumerate(skeletons_array.value):
+					if skele.present:
+						for i in range(25000):  # aim at each present skeleton
+							pitch, yaw = calcRotation(skele.coords)
+							ks.send_coords(pitch, yaw)
+						if index == shoot_index:  # if chosen skeleton is being aimed at, shoot them
+							print("shot someone")
+							ks.shoot()
 							break
-					if aim_coords is not None:
-						pitch, yaw = calcRotation(aim_coords)
-						ks.send_coords(pitch, yaw)
-				if aim_coords is not None:	
-					print("shot someone")	
-					ks.shoot()
-				
-			elif name == "unknown":
+			elif alexa_cmd == "unknown":
 				print("shot unknown")
 				for index, skele in enumerate(skeletons_array.value):
 					if skele.present and skele.name != "unknown":
@@ -116,7 +118,7 @@ def main_loop(argDict):
 						ks.send_coords(pitch, yaw)
 						ks.shoot()
 						break
-			elif name == "everyone":
+			elif alexa_cmd == "everyone":
 				for index, skele in enumerate(skeletons_array.value):
 					if skele.present:  # and skele.name != "":
 						pitch, yaw = calcRotation(skele.coords)
@@ -124,8 +126,8 @@ def main_loop(argDict):
 						ks.shoot()
 				print("shot everyone")
 			else:
-				if name in known_face_names:  # fuzzy search probably
-					print("shot" + name)
+				if alexa_cmd in known_face_names:  # fuzzy search probably
+					print("shot" + alexa_cmd)
 					# do laterrrr
 
 			# hot keys
