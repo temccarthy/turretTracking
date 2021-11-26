@@ -31,7 +31,6 @@ class Skeleton:
 			self.tries = 0
 
 	def set_name(self, name):
-		# print("setting name to " + name)
 		if name == "Unknown":
 			self.tries += 1
 		self.name = name

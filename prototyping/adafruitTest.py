@@ -1,7 +1,14 @@
 import Adafruit_IO as ada
 
-aio = ada.Client('aio_wvPD26JRkgDynJ8a1AdxrQg4inB9')
+with open('../creds.txt') as f:
+    creds = f.readline()
 
-feeds = aio.feeds()
+    aio = ada.Client(creds)
 
-print(feeds[0].name, feeds[0].last_value)
+    feeds = aio.feeds()
+    print(feeds)
+
+    print(feeds[0].name, feeds[0].last_value)
+    feed = aio.feeds('Turret')
+
+    print(aio.receive_next(u'Turret'))
